@@ -1,15 +1,11 @@
 # iConfigure
 Software and Hardware Solutions — Dubai
 
-Cinematic landing page for repair, B2B refurb, and the board lab.
+Live: https://icofigure.github.io/iconfigure.site/
 
-## Go live (2 minutes)
+The GitHub username is currently `iCofigure` (missing n). The brand on the site is **iConfigure**.
+`github.com/iConfigure` is already taken by another account, so the free Pages host cannot become `iconfigure.github.io`.
 
-1. Upload `index.html` to the root of this repo (drag-and-drop on GitHub).
-2. Repo **Settings → Pages → Source: GitHub Actions**.
-3. Re-run the **Deploy Pages** workflow if it did not start.
-4. Site URL: https://icofigure.github.io/iconfigure.site/
+To match the brand in the URL, buy `iconfigure.ae` or `iconfigure.com` and point DNS at GitHub Pages.
 
-Optional: point `iconfigure.site` at that Pages URL (A/CNAME in DNS).
-
-Contact: +971 55 994 6415 · drop@iconfigure.site
+Contact: +971 55 994 6415
