@@ -10,14 +10,14 @@
 html,body{width:100%;margin:0;background:#000;touch-action:pan-y;-webkit-overflow-scrolling:touch}
 body{min-height:900vh;font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;color:#fff;overflow-x:hidden}
 #webgl{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-.cinematic-container{position:fixed;inset:0;z-index:10;pointer-events:none;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 28px}
-.main-header{display:flex;justify-content:space-between;align-items:center;pointer-events:auto;padding:16px 0}
+.cinematic-container{position:fixed;inset:0;z-index:10;pointer-events:none;padding:calc(16px + env(safe-area-inset-top,0px)) 22px 28px}
+.main-header{display:flex;justify-content:space-between;align-items:center;pointer-events:auto;padding:8px 0 12px}
 .brand-mark{display:inline-flex;background:#fff;color:#000;border-radius:8px;padding:6px 12px;font-size:18px;text-decoration:none}
 .contact-btn{background:#fff;color:#000;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;border-radius:24px}
-.slide{position:absolute;bottom:16%;left:0;width:100%;opacity:0;visibility:hidden}
+.slide{position:absolute;left:0;right:0;bottom:18%;width:auto;padding:0 22px;opacity:0;visibility:hidden}
 .slide.active{opacity:1;visibility:visible;pointer-events:auto}
-.slide-title{font-size:clamp(48px,12vw,140px);line-height:.92;font-weight:600;letter-spacing:-.035em;margin-bottom:16px;color:#fff6ed}
-.slide-desc{font-size:17px;line-height:1.5;color:#d1d5db;max-width:34em}
+.slide-title{font-size:clamp(40px,11vw,96px);line-height:.94;font-weight:600;letter-spacing:-.035em;margin-bottom:14px;color:#fff6ed;max-width:92%;text-shadow:0 8px 28px rgba(0,0,0,.55)}
+.slide-desc{font-size:16px;line-height:1.45;color:#e5e7eb;max-width:28em;padding-right:12px;text-shadow:0 4px 18px rgba(0,0,0,.7)}
 .grade-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .grade-row span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(255,246,237,.28);padding:6px 10px;border-radius:999px}
 .lab-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
@@ -29,7 +29,7 @@ body{min-height:900vh;font-family:-apple-system,BlinkMacSystemFont,Helvetica,Ari
 .contact-row a{padding:12px 18px;border-radius:24px;text-decoration:none;font-size:13px;font-weight:600;text-transform:uppercase}
 .contact-row .wa{background:#fff;color:#000}
 .contact-row .call{border:1px solid rgba(255,255,255,.35);color:#fff}
-.mobile-chapters{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;gap:6px;pointer-events:auto}
+.mobile-chapters{display:flex;position:fixed;left:16px;right:16px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;gap:6px;pointer-events:auto}
 .mobile-chapters a{flex:1;text-align:center;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,.8);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.16);padding:8px 0;border-radius:999px}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/loaders/GLTFLoader.js":"https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"}}</script>
