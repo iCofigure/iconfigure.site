@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>iConfigure — Software and Hardware Solutions | Dubai</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; margin: 0; background: #000; }
+        body {
+            min-height: 900vh;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Helvetica, Arial, sans-serif;
+            color: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+        }
+        #webgl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; }
+        .cursor-inner, .cursor-outer { display: none; }
+        @media (hover: hover) and (pointer: fine) {
+            body, * { cursor: none !important; }
+            .cursor-inner, .cursor-outer { display: block; position: fixed; border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+            .cursor-inner { width: 6px; height: 6px; border: 2px solid #fff; z-index: 9999; }
+            .cursor-outer { width: 40px; height: 40px; border: 1.5px solid rgba(255,255,255,0.7); z-index: 9998; }
+        }
+        .cinematic-container {
+            position: fixed; inset: 0; z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 28px;
+        }
+        @media (min-width: 901px) { .cinematic-container { padding: 0 60px 40px; } }
+        .main-header {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; pointer-events: auto; padding: 16px 0;
+        }
+        .brand { text-decoration: none; color: #fff; }
+        .brand-mark {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #fff; color: #000; border-radius: 8px;
+            padding: 6px 12px 6px 8px; font-size: 18px; font-weight: 500;
+        }
+        .header-nav { display: none; align-items: center; gap: 20px; }
+        @media (min-width: 901px) { .header-nav { display: flex; } }
+        .nav-link { color: #fff; text-decoration: none; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; }
+        .nav-dot { width: 3px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .contact-btn {
+            background: #fff; color: #000; text-decoration: none;
+            font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            padding: 10px 16px; border-radius: 24px;
+        }
+        .slide {
+            position: absolute; bottom: 14%; left: 0; width: 100%;
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .slide.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .slide-title {
+            font-size: clamp(48px, 12vw, 140px); line-height: 0.92; font-weight: 600;
+            letter-spacing: -0.035em; margin-bottom: 16px; color: #fff6ed;
+        }
+        .slide-title .char {
+            display: inline-block; opacity: 0; transform: translateY(36px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .slide.active .slide-title .char { opacity: 1; transform: none; }
+        .slide-desc { font-size: 17px; line-height: 1.5; color: #d1d5db; max-width: 34em; }
+        .slide-desc a { color: #fff; }
+        #slide-1 .col-2 { margin-top: 12px; }
+        @media (min-width: 901px) {
+            #slide-1 .slide-title, #slide-lab .slide-title { margin-left: 60px; }
+            #slide-1 .col-1 { margin-left: 60px; width: 22vw; }
+            #slide-1 .col-2 { position: absolute; left: calc(25vw + 40px); width: 22vw; margin-top: 0; }
+            #slide-2 .slide-title { margin-left: calc(25vw + 40px); }
+            #slide-2 .slide-desc, #slide-2 .grade-row { margin-left: calc(50vw + 20px); }
+            #slide-lab .lab-body { margin-left: calc(25vw + 40px); max-width: 640px; }
+            #slide-3 { left: 50vw; width: 40vw; }
+            #slide-4 { left: 25%; max-width: 640px; }
+        }
+        .lab-kicker, .lab-skus { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,246,237,0.5); margin: 10px 0; }
+        .lab-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-top: 14px; }
+        .lab-col h3 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+        .lab-list { list-style: none; }
+        .lab-list li { font-size: 14px; color: #d1d5db; padding: 4px 0; }
+        .grade-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .grade-row span { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid rgba(255,246,237,0.28); padding: 6px 10px; border-radius: 999px; }
+        .contact-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .contact-row a { padding: 12px 18px; border-radius: 24px; text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; }
+        .contact-row .wa { background: #fff; color: #000; }
+        .contact-row .call { border: 1px solid rgba(255,255,255,0.35); color: #fff; }
+        .story-dashes { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); display: flex; flex-direction: column; gap: 10px; }
+        .story-dash { width: 2px; height: 34px; background: rgba(255,255,255,0.15); }
+        .story-dash-fill { width: 100%; height: 0; background: #fff; }
+        .grid-lines { position: fixed; inset: 0 16px; display: flex; justify-content: space-between; z-index: 5; pointer-events: none; }
+        .grid-line { width: 1px; height: 100%; background: rgba(255,255,255,0.1); position: relative; }
+        .grid-dot { position: absolute; left: 50%; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); transform: translate(-50%,-50%); }
+        @media (max-width: 900px) { .grid-line:nth-child(2), .grid-line:nth-child(4) { display: none; } }
+        .mobile-chapters { display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 30; gap: 6px; pointer-events: auto; }
+        @media (min-width: 901px) { .mobile-chapters { display: none; } }
+        .mobile-chapters a {
+            flex: 1; text-align: center; font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; text-decoration: none; color: rgba(255,255,255,0.8);
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.16);
+            padding: 8px 0; border-radius: 999px;
+        }
+    </style>
+    <script type="importmap">
+    { "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/loaders/GLTFLoader.js": "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"
+    } }
+    </script>
+</head>
+<body>
+    <div class="cursor-inner"></div>
+    <div class="cursor-outer"></div>
+    <div class="cinematic-container">
+        <div class="main-header">
+            <a class="brand" href="#slide-1"><span class="brand-mark">iConfigure</span></a>
+            <nav class="header-nav">
+                <a href="#slide-1" class="nav-link">Repair</a><span class="nav-dot"></span>
+                <a href="#slide-2" class="nav-link">B2B</a><span class="nav-dot"></span>
+                <a href="#slide-lab" class="nav-link">Lab</a><span class="nav-dot"></span>
+                <a href="#slide-3" class="nav-link">Personal</a><span class="nav-dot"></span>
+                <a href="#slide-4" class="nav-link">Contact</a>
+            </nav>
+            <a class="contact-btn" href="https://wa.me/971559946415" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+        <div class="slide active" id="slide-1">
+            <h2 class="slide-title">Restore<br>iPhone</h2>
+            <p class="slide-desc col-1">Dubai iPhone repair and refurbishment. Screens, batteries, housings, board-level work.</p>
+            <p class="slide-desc col-2">Partners with stock to recover, and people who want their own phone back.</p>
+        </div>
+        <div class="slide" id="slide-2">
+            <h2 class="slide-title">Partner<br>Stock</h2>
+            <p class="slide-desc">Trade-ins, returns, graded lots. Restored and sent back ready for resale.</p>
+            <div class="grade-row"><span>A+</span><span>A</span><span>B</span><span>C</span><span>BER</span></div>
+        </div>
+        <div class="slide" id="slide-lab">
+            <h2 class="slide-title">The<br>Lab</h2>
+            <div class="lab-body">
+                <p class="lab-kicker">Board level</p>
+                <p class="slide-desc">No power, no charge, boot loop, liquid. Rail first. Heat last. Original board, original IMEI.</p>
+                <div class="lab-cols">
+                    <div class="lab-col"><h3>Diagnose</h3><ul class="lab-list"><li>Current-draw</li><li>Thermal short hunt</li><li>Ultrasonic clean</li><li>Rail trace</li></ul></div>
+                    <div class="lab-col"><h3>Restore</h3><ul class="lab-list"><li>Charging / power ICs</li><li>Backlight, audio, touch</li><li>Pads and connectors</li><li>BGA · board split</li></ul></div>
+                </div>
+                <p class="lab-skus">Diagnose · Restore · Separate · Harvest</p>
+            </div>
+        </div>
+        <div class="slide" id="slide-3">
+            <h2 class="slide-title">Personal</h2>
+            <p class="slide-desc">Cracked glass, battery, no-power, water. Message, drop, pick up restored.</p>
+        </div>
+        <div class="slide" id="slide-4">
+            <h2 class="slide-title">Talk<br>to us</h2>
+            <p class="slide-desc">Mukthar · Technical Specialist. <a href="tel:+971559946415">+971 55 994 6415</a>. Dubai.</p>
+            <div class="contact-row">
+                <a class="wa" href="https://wa.me/971559946415" target="_blank" rel="noopener">WhatsApp</a>
+                <a class="call" href="tel:+971559946415">Call</a>
+            </div>
+        </div>
+    </div>
+    <div class="grid-lines">
+        <div class="grid-line"><div class="grid-dot" style="top:15%"></div></div>
+        <div class="grid-line"><div class="grid-dot" style="top:40%"></div></div>
+        <div class="grid-line"><div class="grid-dot" style="top:70%"></div></div>
+        <div class="grid-line"><div class="grid-dot" style="top:25%"></div></div>
+        <div class="grid-line"><div class="story-dashes">
+            <div class="story-dash"><div class="story-dash-fill" id="dash-fill-1"></div></div>
+            <div class="story-dash"><div class="story-dash-fill" id="dash-fill-2"></div></div>
+            <div class="story-dash"><div class="story-dash-fill" id="dash-fill-3"></div></div>
+            <div class="story-dash"><div class="story-dash-fill" id="dash-fill-4"></div></div>
+            <div class="story-dash"><div class="story-dash-fill" id="dash-fill-5"></div></div>
+        </div></div>
+    </div>
+    <nav class="mobile-chapters">
+        <a href="#slide-1" class="nav-link">Repair</a>
+        <a href="#slide-2" class="nav-link">B2B</a>
+        <a href="#slide-lab" class="nav-link">Lab</a>
+        <a href="#slide-3" class="nav-link">You</a>
+        <a href="#slide-4" class="nav-link">Talk</a>
+    </nav>
+    <canvas id="webgl"></canvas>
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        const ASSET = 'https://api.getlayers.ai/storage/v1/object/public/public/assets/laocoon-59f84455c6';
+        const canvas = document.querySelector('#webgl');
+        const sizes = { width: innerWidth, height: innerHeight };
+        const clock = new THREE.Clock();
+        let currentScroll = 0, mouseX = 0, mouseY = 0, tmx = 0, tmy = 0;
+        let cx = innerWidth/2, cy = innerHeight/2, ox = cx, oy = cy;
+        let scene, camera, renderer, pivot, mixer, uniforms, sparks;
+        const N = 360, sparkData = [];
+
+        function splitTitles() {
+            document.querySelectorAll('.slide-title').forEach(el => {
+                const parts = el.innerHTML.split(/(<br\\s*\\/?>)/i);
+                let html = '', n = 0;
+                parts.forEach(p => {
+                    if (/^<br/i.test(p)) html += p;
+                    else for (const ch of p) {
+                        if (ch === ' ') html += ' ';
+                        else { html += `<span class="char" style="transition-delay:${n*0.03}s">${ch}</span>`; n++; }
+                    }
+                });
+                el.innerHTML = html;
+            });
+        }
+        function updateSlides(s) {
+            const set = (id,a,b) => { const e = document.getElementById(id); if (e) e.classList.toggle('active', s>=a && s<=b); };
+            set('slide-1',-0.1,0.12); set('slide-2',0.20,0.34); set('slide-lab',0.40,0.54);
+            set('slide-3',0.60,0.74); set('slide-4',0.84,1.05);
+            for (let i=1;i<=5;i++) {
+                const f = document.getElementById('dash-fill-'+i); if (!f) continue;
+                const a=(i-1)*0.2, b=i*0.2;
+                f.style.height = (Math.max(0,Math.min(1,(s-a)/(b-a)))*100)+'%';
+            }
+        }
+        function setupNav() {
+            const map = {'#slide-1':0,'#slide-2':0.26,'#slide-lab':0.46,'#slide-3':0.66,'#slide-4':0.94};
+            document.querySelectorAll('.nav-link,.brand').forEach(l => l.addEventListener('click', e => {
+                const h = l.getAttribute('href'); if (!(h in map)) return;
+                e.preventDefault();
+                scrollTo({ top: (document.documentElement.scrollHeight-innerHeight)*map[h], behavior:'smooth' });
+            }));
+        }
+        function init() {
+            scene = new THREE.Scene(); scene.background = new THREE.Color('#000');
+            camera = new THREE.PerspectiveCamera(50, sizes.width/sizes.height, 0.1, 100);
+            camera.position.set(0,0.2,3); scene.add(camera);
+            uniforms = { uTime:{value:0}, uResolution:{value:new THREE.Vector2(sizes.width,sizes.height)}, uScroll:{value:0} };
+            const mat = new THREE.ShaderMaterial({
+                uniforms, depthWrite:false, depthTest:false,
+                vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+                fragmentShader:`uniform float uTime,uScroll;uniform vec2 uResolution;void main(){vec2 uv=(gl_FragCoord.xy-0.5*uResolution.xy)/uResolution.y;float t=uTime*0.08,s=uScroll;vec2 w=uv;w.x+=sin(uv.y*2.5+t*0.2+s*5.0)*0.35;w.y+=cos(uv.x*2.5-t*0.15)*0.35;float f=sin(dot(w,vec2(cos(0.6),sin(0.6)))*2.4+t)*0.5+cos(dot(w,vec2(cos(-0.7),sin(-0.7)))*3.2-t*1.4)*0.35;float c=pow(max(0.0,1.0-abs(f-0.15)),8.0);vec3 col=mix(vec3(0.001),mix(vec3(0.085,0.04,0.015),vec3(0.015,0.035,0.065),s),smoothstep(-0.5,0.7,f));col+=mix(vec3(0.45,0.3,0.18),vec3(0.18,0.35,0.55),s)*c*1.3;col*=1.0-dot(uv,uv)*0.12;gl_FragColor=vec4(col,1.0);}`
+            });
+            const pl = new THREE.Mesh(new THREE.PlaneGeometry(30,30), mat); pl.position.z=-8; camera.add(pl);
+            renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+            renderer.setSize(sizes.width, sizes.height); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 2.2;
+            scene.add(new THREE.AmbientLight('#fff',0.1));
+            const key = new THREE.SpotLight('#fff',18); key.position.set(4,6,3); scene.add(key);
+            const rim = new THREE.DirectionalLight('#e3f2ff',10); rim.position.set(-5,3,-4); scene.add(rim);
+            pivot = new THREE.Group(); scene.add(pivot);
+            new GLTFLoader().load(ASSET+'/bronze_horse.glb', g => {
+                const m=g.scene; m.traverse(c=>{ if(c.isMesh&&c.material){ c.material.roughness=0.42; c.material.metalness=0.92; }});
+                const box=new THREE.Box3().setFromObject(m); const sz=box.getSize(new THREE.Vector3());
+                m.scale.setScalar(3.5/Math.max(sz.x,sz.y,sz.z,0.0001)); m.updateMatrixWorld(true);
+                m.position.sub(new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3()));
+                pivot.add(m); pivot.position.y=-0.4;
+            });
+            const geo=new THREE.BufferGeometry(), pos=new Float32Array(N*3), col=new Float32Array(N*3);
+            for(let i=0;i<N;i++){ pos[i*3]=(Math.random()-0.5)*6; pos[i*3+1]=(Math.random()-0.5)*5; pos[i*3+2]=(Math.random()-0.5)*6; col[i*3]=1;col[i*3+1]=0.45;col[i*3+2]=0.08; sparkData.push({vy:0.18+Math.random()*0.28}); }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col,3));
+            sparks = new THREE.Points(geo, new THREE.PointsMaterial({ size:0.025, vertexColors:true, transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false }));
+            scene.add(sparks);
+        }
+        function animate(){
+            requestAnimationFrame(animate);
+            const max = document.documentElement.scrollHeight - innerHeight;
+            const target = max>0 ? scrollY/max : 0;
+            currentScroll += (target-currentScroll)*0.025;
+            mouseX += (tmx-mouseX)*0.05; mouseY += (tmy-mouseY)*0.05;
+            ox += (cx-ox)*0.2; oy += (cy-oy)*0.2;
+            const o=document.querySelector('.cursor-outer'); if(o){ o.style.left=ox+'px'; o.style.top=oy+'px'; }
+            if(pivot){ pivot.rotation.y=mouseX*0.25; pivot.rotation.x=mouseY*0.15; }
+            if(sparks){ const p=sparks.geometry.attributes.position.array; const dt=clock.getDelta();
+                for(let i=0;i<N;i++){ p[i*3+1]+=sparkData[i].vy*dt; if(p[i*3+1]>3) p[i*3+1]=-2.5; }
+                sparks.geometry.attributes.position.needsUpdate=true; }
+            const phi=currentScroll*Math.PI*2, y=0.35+Math.sin(currentScroll*Math.PI)*0.8, r=4.2-Math.sin(currentScroll*Math.PI)*0.6;
+            camera.position.lerp(new THREE.Vector3(r*Math.sin(phi), y, r*Math.cos(phi)), 0.025);
+            camera.lookAt(0,-0.15,0);
+            uniforms.uTime.value=clock.getElapsedTime(); uniforms.uScroll.value=currentScroll;
+            updateSlides(currentScroll); renderer.render(scene,camera);
+        }
+        function boot(){ splitTitles(); init(); setupNav(); updateSlides(0); animate(); }
+        addEventListener('pointermove', e => {
+            cx=e.clientX; cy=e.clientY;
+            const i=document.querySelector('.cursor-inner'); if(i){ i.style.left=cx+'px'; i.style.top=cy+'px'; }
+            tmx=e.clientX/innerWidth*2-1; tmy=e.clientY/innerHeight*2-1;
+        });
+        addEventListener('resize', () => {
+            sizes.width=innerWidth; sizes.height=innerHeight;
+            camera.aspect=sizes.width/sizes.height; camera.updateProjectionMatrix();
+            renderer.setSize(sizes.width,sizes.height); uniforms.uResolution.value.set(sizes.width,sizes.height);
+        });
+        if (document.readyState==='loading') addEventListener('DOMContentLoaded', boot); else boot();
+    </script>
+</body>
+</html>
